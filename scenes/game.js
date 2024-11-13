@@ -96,7 +96,6 @@ export default class Game extends Phaser.Scene {
     hitObstacle(player, obstacle) {
         this.audios['dead'].play();
         this.theme.stop();
-        // this.scene.pause();
         this.registry.set('score', this.score);
         this.scene.start('gameover');
     }
