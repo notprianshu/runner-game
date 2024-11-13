@@ -6,6 +6,7 @@ export default class Game extends Phaser.Scene {
         super({key: 'game'});
     }
     preload() {
+        // this.registry.set('score', '0');
         this.load.spritesheet('player', '../assets/img/Run.png', {frameWidth: 55, frameHeight: 69})
         this.load.spritesheet('coin', '../assets/img/coin.png', {frameWidth:32, frameHeight:32});
         this.load.image('bomb', '../assets/img/bomb.png');
@@ -95,7 +96,9 @@ export default class Game extends Phaser.Scene {
     hitObstacle(player, obstacle) {
         this.audios['dead'].play();
         this.theme.stop();
-        this.scene.pause();
+        // this.scene.pause();
+        this.registry.set('score', this.score);
+        this.scene.start('gameover');
     }
 
     hitCoins(player, coin) {

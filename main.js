@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import Game from './scenes/game.js'
+import GameOver from './scenes/gameover.js'
 
 const config = {
   height: 300,
@@ -16,7 +17,7 @@ const config = {
       // debug: true
     }
   },
-  scene: Game 
+  scene: [Game, GameOver]
 }
 
 const game = new Phaser.Game(config);
