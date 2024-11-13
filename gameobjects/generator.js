@@ -54,16 +54,11 @@ class Coin extends Phaser.GameObjects.Sprite {
     init() {
         this.scene.tweens.add({
             targets: this,
-            x: {from: 1100, to: -100},
+            x: {from: this.scene.width, to: -100},
             duration: 2200,
             onComplete: () => {this.destroy},
         })
         this.anims.play('coinflip', true);
-        this.scene.physics.add.overlap(this.scene.player, this, this.hitCoin, () => true, this);
-    }
-    hitCoin(player, coin) {
-        this.scene.audios.coin.play();
-        this.destroy();
     }
 }
 
@@ -80,7 +75,7 @@ class Obstacle extends Phaser.GameObjects.Sprite {
     init() {
         this.scene.tweens.add({
             targets: this, 
-            x: {from: 1100, to:-100},
+            x: {from: this.scene.width, to:-100},
             duration: 2200,
             onComplete: () => {this.destroy;}
         })

@@ -14,28 +14,57 @@ export default class Game extends Phaser.Scene {
         this.load.audio('dead', '../assets/audio/dead.mp3')
         this.load.audio('jump', '../assets/audio/jump.mp3')
         this.load.audio('theme', '../assets/audio/theme.mp3')
+        this.load.bitmapFont('arcade', '../assets/fonts/arcade.png', '../assets/fonts/arcade.xml');
     }
     create() {
+        this.width = this.sys.game.config.width;
+        this.height = this.sys.game.config.height;
+        
+        this.score = 0;
+        this.scoreText = this.add.bitmapText(
+            this.width/2,
+            10, 
+            'arcade',
+            this.score,
+            20
+        )
+
         this.audios = {
             jump: this.sound.add('jump'),
             coin: this.sound.add('coin'),
             dead: this.sound.add('dead')
         }
+
         this.player = new Player(this, 100, 16);
-        // this.player.body.setOffset(10, 0)
         this.player.body.setSize(44, 62);
         this.player.body.setGravityY(800);
+
         this.obstacles = this.add.group();
         this.coins = this.add.group();
+
         this.anims.create({
             key: 'coinflip',
             frames: this.anims.generateFrameNumbers('coin', {start: 0, end: 7}),
             frameRate: 8,
             repeat: true
         })
+
         this.generator = new Generator(this);
-        this.physics.add.overlap(this.player, this.obstacles, this.hitObstacle, () => true, this);
+
+        this.physics.add.overlap(this.player, this.obstacles, this.hitObstacle, () => true, this); //when player hits a bomb
+        this.physics.add.overlap(this.player, this.coins, this.hitCoins, () => true, this); //when player hits a coin
+
         this.playTheme();
+
+        this.updateScore = this.time.addEvent({
+            delay: 100,
+            callback: () => {
+                this.score += 1;
+                this.scoreText.setText(this.score);
+            },
+            callbackScope: this,
+            loop: true
+        })
 
         this.keys = {
             'up': this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
@@ -48,6 +77,7 @@ export default class Game extends Phaser.Scene {
             // repeat: -1,
         })
     }
+
     update() {
         if (this.player.body.blocked.down) {
             this.player.anims.play('player', true);
@@ -61,11 +91,20 @@ export default class Game extends Phaser.Scene {
             this.player.body.setVelocityY(600);
         }
     }
+
     hitObstacle(player, obstacle) {
         this.audios['dead'].play();
         this.theme.stop();
         this.scene.pause();
     }
+
+    hitCoins(player, coin) {
+        this.score += 200;
+        this.scoreText.setText(this.score);
+        this.audios.coin.play();
+        coin.destroy();
+    }
+
     playTheme() {
         this.theme = this.sound.add('theme');
         this.theme.play({
